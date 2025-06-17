@@ -63,7 +63,8 @@ private:
   int m_format;
 
   /// Handle for the genparticles to be written
-  mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{"GenParticles", Gaudi::DataHandle::Writer, this};
+  mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{"GenParticles", Gaudi::DataHandle::Writer,
+                                                                           this};
 };
 
 #endif // GENERATION_HEPEVTREADER_H

@@ -66,7 +66,8 @@ private:
   std::string input_type;
   double xing, cut_z, beam_energy;
   /// Handle for the genparticles to be written
-  mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{"GenParticles", Gaudi::DataHandle::Writer, this};
+  mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{"GenParticles", Gaudi::DataHandle::Writer,
+                                                                           this};
 
   /// Tools to handle input from HepMC-file
   ToolHandle<IHepMCFileReaderTool> m_signalFileReader;
