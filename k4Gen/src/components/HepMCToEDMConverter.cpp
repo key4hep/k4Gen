@@ -4,7 +4,6 @@
 // HepPDT
 #include "HepPDT/ParticleID.hh"
 // EDM4hep
-#include "edm4hep/EDM4hepVersion.h"
 #include "edm4hep/MCParticleCollection.h"
 
 DECLARE_COMPONENT(HepMCToEDMConverter)
