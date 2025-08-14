@@ -4,10 +4,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.15)
 project(k4Gen LANGUAGES CXX)
 
 #- Dependencies ------------------------------------------------
-find_package(ROOT COMPONENTS RIO Tree Hist)
-find_package(Gaudi REQUIRED)
 find_package(k4FWCore 1.3 REQUIRED)
 find_package(EDM4HEP REQUIRED)
+find_package(Gaudi REQUIRED)
+find_package(ROOT COMPONENTS RIO Tree Hist)
 
 include(cmake/Key4hepConfig.cmake)
 
