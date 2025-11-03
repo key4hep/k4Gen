@@ -130,6 +130,23 @@ StatusCode GenEventFilter::initialize() {
 
 StatusCode GenEventFilter::execute(const EventContext&) const {
   const edm4hep::MCParticleCollection* inParticles = m_inColl.get();
+
+  if (m_nEventsSeen == m_nEventsSeenMax) {
+    debug() << "Maximum number of " << m_nEventsSeenMax.value()
+            << " seen events reached!" << endmsg;
+
+    StatusCode sc = m_eventProcessor->stopRun();
+    if (sc.isFailure()) {
+      error() << "Error when attempting to stop event processing! Aborting..."
+              << endmsg;
+      return sc;
+    }
+
+    m_incidentSvc->fireIncident(Incident(name(), IncidentType::AbortEvent));
+
+    return StatusCode::SUCCESS;
+  }
+
   m_nEventsSeen++;
 
   if (!(*m_filterRulePtr)(inParticles)) {
