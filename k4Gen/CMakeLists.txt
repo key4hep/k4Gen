@@ -1,3 +1,22 @@
+#[[
+Copyright (c) 2020-2024 Key4hep-Project.
+
+This file is part of Key4hep.
+See https://key4hep.github.io/key4hep-doc/ for further info.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+]]
+
 ################################################################################
 # Package: k4Gen
 ################################################################################
@@ -10,7 +29,7 @@ find_package(EvtGen REQUIRED)
 file(GLOB k4gen_plugin_sources src/components/*.cpp)
 gaudi_add_module(k4Gen
                  SOURCES ${k4gen_plugin_sources}
-                 LINK Gaudi::GaudiKernel 
+                 LINK Gaudi::GaudiKernel
                       ${HEPMC3_LIBRARIES}
                       k4FWCore::k4FWCore
                       HepPDT::heppdt
@@ -20,7 +39,7 @@ gaudi_add_module(k4Gen
                       ROOT::Hist
                       )
 
-target_include_directories(k4Gen PUBLIC ${PYTHIA8_INCLUDE_DIRS} 
+target_include_directories(k4Gen PUBLIC ${PYTHIA8_INCLUDE_DIRS}
                                         ${HEPMC3_INCLUDE_DIR}
 					${HEPMC_INCLUDE_DIR}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
@@ -55,7 +74,7 @@ set_test_env(ParticleGun)
 
 add_test(NAME Pythia8Default
                WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-               COMMAND  k4run ${CMAKE_CURRENT_LIST_DIR}/options/pythia.py 
+               COMMAND  k4run ${CMAKE_CURRENT_LIST_DIR}/options/pythia.py
               )
 set_test_env(Pythia8Default)
 

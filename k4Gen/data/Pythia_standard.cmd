@@ -51,7 +51,7 @@ PhaseSpace:pTHatMin = 50.          ! minimal pT scale in process
 
 ! 6) Random generator
 Random:setSeed = on                ! apply user-set seed everytime the Pythia::init is called
-Random:seed    = 0                 ! -1=default seed, 0=seed based on time, >0 user seed number 
+Random:seed    = 0                 ! -1=default seed, 0=seed based on time, >0 user seed number
 
 ! 7) Other settings. Can be expanded as desired.
 #Tune:preferLHAPDF = off           ! use internal PDFs when LHAPDF not linked
