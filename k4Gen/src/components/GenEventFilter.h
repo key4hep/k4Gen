@@ -1,6 +1,9 @@
 #ifndef GENERATION_GENEVENTFILTER_H
 #define GENERATION_GENEVENTFILTER_H
 
+// std
+#include <limits>
+
 // Gaudi
 #include "GaudiKernel/Algorithm.h"
 class IProperty;
@@ -46,6 +49,11 @@ private:
 
   /// Path of the filter rule file.
   Gaudi::Property<std::string> m_filterRulePath{this, "filterRulePath", "", "Path to the filter rule file"};
+
+  /// Maximum number of events seen
+  Gaudi::Property<unsigned int> m_nEventsSeenMax{
+      this, "nEventsSeenMax", std::numeric_limits<unsigned int>::max(),
+      "Limit the number of events seen"};
 
   /// Targeted number of events.
   mutable std::atomic<int> m_nEventsTarget;
