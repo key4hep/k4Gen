@@ -53,7 +53,7 @@ from Configurables import HepMCToEDMConverter
 hepmc_converter = HepMCToEDMConverter()
 hepmc_converter.hepmc.Path="hepmc"
 hepmc_converter.hepmcStatusList = [] # convert particles with all statuses
-hepmc_converter.GenParticles.Path="GenParticles"
+hepmc_converter.GenParticles.Path="MCParticles"
 ApplicationMgr().TopAlg += [hepmc_converter]
 
 ### Filters generated particles
@@ -61,8 +61,8 @@ ApplicationMgr().TopAlg += [hepmc_converter]
 from Configurables import GenParticleFilter
 genfilter = GenParticleFilter("StableParticles")
 genfilter.accept = [1]
-genfilter.GenParticles.Path = "GenParticles"
-genfilter.GenParticlesFiltered.Path = "GenParticlesStable"
+genfilter.GenParticles.Path = "MCParticles"
+genfilter.GenParticlesFiltered.Path = "MCParticlesStable"
 ApplicationMgr().TopAlg += [genfilter]
 
 from Configurables import PodioOutput
