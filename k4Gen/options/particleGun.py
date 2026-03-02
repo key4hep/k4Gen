@@ -44,7 +44,7 @@ ApplicationMgr().TopAlg += [writer]
 from Configurables import HepMCToEDMConverter
 hepmc_converter = HepMCToEDMConverter()
 hepmc_converter.hepmc.Path="hepmc"
-hepmc_converter.GenParticles.Path = "GenParticles"
+hepmc_converter.GenParticles.Path = "MCParticles"
 ApplicationMgr().TopAlg += [hepmc_converter]
 
 from Configurables import HepMCHistograms

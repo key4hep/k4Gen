@@ -55,12 +55,12 @@ ApplicationMgr().TopAlg += [pythia8gen]
 hepmc_converter = HepMCToEDMConverter()
 hepmc_converter.hepmc.Path = "hepmc"
 hepmc_converter.hepmcStatusList = []  # convert particles with all statuses
-hepmc_converter.GenParticles.Path = "GenParticles"
+hepmc_converter.GenParticles.Path = "MCParticles"
 ApplicationMgr().TopAlg += [hepmc_converter]
 
 # Filters events
 eventfilter = GenEventFilter("EventFilter")
-eventfilter.particles.Path = "GenParticles"
+eventfilter.particles.Path = "MCParticles"
 # eventfilter.filterRule = \
 #     "bool filterRule(const edm4hep::MCParticleCollection* inColl){" \
 #     "  return inColl->size() > 1000;}"
