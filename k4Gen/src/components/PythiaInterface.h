@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2020-2024 Key4hep-Project.
+ *
+ * This file is part of Key4hep.
+ * See https://key4hep.github.io/key4hep-doc/ for further info.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef GENERATION_PYTHIAINTERFACE_H
 #define GENERATION_PYTHIAINTERFACE_H
 
@@ -60,7 +78,8 @@ private:
   /// Pythia8 engine for jet clustering
   std::unique_ptr<Pythia8::SlowJet> m_slowJet{nullptr};
   // Output handle for ME/PS matching variables
-  mutable k4FWCore::DataHandle<std::vector<float>> m_handleMePsMatchingVars{"mePsMatchingVars", Gaudi::DataHandle::Writer, this};
+  mutable k4FWCore::DataHandle<std::vector<float>> m_handleMePsMatchingVars{"mePsMatchingVars",
+                                                                            Gaudi::DataHandle::Writer, this};
 
   // Maximum number of aborts before giving up
   int m_maxAborts{0};
