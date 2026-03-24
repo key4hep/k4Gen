@@ -5,6 +5,7 @@
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/Units.h"
 #include "k4FWCore/DataHandle.h"
+#include "edm4hep/Constants.h"
 
 namespace edm4hep {
 class MCParticleCollection;
@@ -26,7 +27,7 @@ private:
   /// Handle for the HepMC to be read
   mutable k4FWCore::DataHandle<HepMC3::GenEvent> m_hepmchandle{"hepmc", Gaudi::DataHandle::Writer, this};
   /// Handle for the genparticles to be written
-  mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{"MCParticles", Gaudi::DataHandle::Reader, this};
+  mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{edm4hep::labels::MCParticles, Gaudi::DataHandle::Reader, this};
 };
 
 #endif

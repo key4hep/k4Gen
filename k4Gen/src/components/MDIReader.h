@@ -15,6 +15,8 @@
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/ReaderAscii.h"
 
+#include "edm4hep/Constants.h"
+
 namespace edm4hep {
 class MCParticleCollection;
 }
@@ -48,7 +50,7 @@ private:
   std::string input_type;
   double xing, cut_z, beam_energy;
   /// Handle for the genparticles to be written
-  mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{"MCParticles", Gaudi::DataHandle::Writer, this};
+  mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{edm4hep::labels::MCParticles, Gaudi::DataHandle::Writer, this};
 
   /// Tools to handle input from HepMC-file
   ToolHandle<IHepMCFileReaderTool> m_signalFileReader;
