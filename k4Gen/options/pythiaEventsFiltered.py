@@ -60,7 +60,7 @@ ApplicationMgr().TopAlg += [hepmc_converter]
 
 # Filters events
 eventfilter = GenEventFilter("EventFilter")
-eventfilter.particles.Path = "MCParticles"
+eventfilter.particles.Path = e4_labels.MCParticles
 # eventfilter.filterRule = \
 #     "bool filterRule(const edm4hep::MCParticleCollection* inColl){" \
 #     "  return inColl->size() > 1000;}"
