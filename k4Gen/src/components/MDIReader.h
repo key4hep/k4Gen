@@ -45,8 +45,6 @@ public:
 private:
   std::string m_filename;
   mutable std::ifstream m_input;
-  int NHEP;
-  int m_format;
   std::string input_type;
   double xing, cut_z, beam_energy;
   /// Handle for the genparticles to be written
