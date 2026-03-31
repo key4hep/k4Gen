@@ -9,7 +9,7 @@ class IEventProcessor;
 
 // k4FWCore
 #include "k4FWCore/DataHandle.h"
-#include "k4FWCore/MetaDataHandle.h"
+#include "k4FWCore/MetadataUtils.h"
 
 // Datamodel
 #include "edm4hep/Constants.h"
@@ -38,8 +38,6 @@ public:
 private:
   /// Handle for the MCParticle collection to be read.
   mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_inColl{"particles", Gaudi::DataHandle::Reader, this};
-  /// Writes out filter statistics.
-  k4FWCore::MetaDataHandle<std::vector<int>> m_evtFilterStats{edm4hep::labels::EventFilterStats, Gaudi::DataHandle::Writer};
 
   /// Rule to filter the events with.
   Gaudi::Property<std::string> m_filterRuleStr{this, "filterRule", "", "Filter rule to apply on the events"};
