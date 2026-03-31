@@ -14,7 +14,7 @@ from Configurables import ApplicationMgr, k4DataSvc, PodioOutput
 from Configurables import GaussSmearVertex, PythiaInterface, GenAlg
 from Configurables import HepMCToEDMConverter, GenParticleFilter
 from Configurables import GenEventFilter
-
+from edm4hep import labels as e4_labels
 
 ApplicationMgr().EvtSel = 'NONE'
 ApplicationMgr().EvtMax = 20
@@ -55,12 +55,12 @@ ApplicationMgr().TopAlg += [pythia8gen]
 hepmc_converter = HepMCToEDMConverter()
 hepmc_converter.hepmc.Path = "hepmc"
 hepmc_converter.hepmcStatusList = []  # convert particles with all statuses
-hepmc_converter.GenParticles.Path = "GenParticles"
+hepmc_converter.GenParticles.Path = e4_labels.MCParticles
 ApplicationMgr().TopAlg += [hepmc_converter]
 
 # Filters events
 eventfilter = GenEventFilter("EventFilter")
-eventfilter.particles.Path = "GenParticles"
+eventfilter.particles.Path = e4_labels.MCParticles
 # eventfilter.filterRule = \
 #     "bool filterRule(const edm4hep::MCParticleCollection* inColl){" \
 #     "  return inColl->size() > 1000;}"

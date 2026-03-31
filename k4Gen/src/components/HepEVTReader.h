@@ -8,6 +8,7 @@
 #include "Generation/IVertexSmearingTool.h"
 
 #include "k4FWCore/DataHandle.h"
+#include "edm4hep/Constants.h"
 
 #include "Gaudi/Algorithm.h"
 #include "GaudiKernel/ToolHandle.h"
@@ -45,7 +46,7 @@ private:
   int m_format;
 
   /// Handle for the genparticles to be written
-  mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{"GenParticles", Gaudi::DataHandle::Writer, this};
+  mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{edm4hep::labels::MCParticles, Gaudi::DataHandle::Writer, this};
 };
 
 #endif // GENERATION_HEPEVTREADER_H

@@ -8,6 +8,7 @@ Generates according to a pythia .cmd file and saves them in fcc edm format.
 import os
 from GaudiKernel import SystemOfUnits as units
 from Gaudi.Configuration import *
+from edm4hep import labels as e4_labels
 
 from Configurables import ApplicationMgr
 ApplicationMgr().EvtSel = 'NONE' 
@@ -53,7 +54,7 @@ from Configurables import HepMCToEDMConverter
 hepmc_converter = HepMCToEDMConverter()
 hepmc_converter.hepmc.Path="hepmc"
 hepmc_converter.hepmcStatusList = [] # convert particles with all statuses
-hepmc_converter.GenParticles.Path="GenParticles"
+hepmc_converter.GenParticles.Path=e4_labels.MCParticles
 ApplicationMgr().TopAlg += [hepmc_converter]
 
 ### Filters generated particles
@@ -61,8 +62,8 @@ ApplicationMgr().TopAlg += [hepmc_converter]
 from Configurables import GenParticleFilter
 genfilter = GenParticleFilter("StableParticles")
 genfilter.accept = [1]
-genfilter.GenParticles.Path = "GenParticles"
-genfilter.GenParticlesFiltered.Path = "GenParticlesStable"
+genfilter.GenParticles.Path = e4_labels.MCParticles
+genfilter.GenParticlesFiltered.Path = "MCParticlesStable"
 ApplicationMgr().TopAlg += [genfilter]
 
 from Configurables import PodioOutput
