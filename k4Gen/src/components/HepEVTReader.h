@@ -43,7 +43,6 @@ private:
   std::string m_filename;
   mutable std::ifstream m_input;
   mutable int NHEP;
-  int m_format;
 
   /// Handle for the genparticles to be written
   mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{edm4hep::labels::MCParticles, Gaudi::DataHandle::Writer, this};

@@ -25,6 +25,9 @@ MDIReader::MDIReader(const std::string& name, ISvcLocator* svcLoc) : Gaudi::Algo
 
 StatusCode MDIReader::initialize() {
   StatusCode sc = Gaudi::Algorithm::initialize();
+  if (sc.isFailure()) {
+    return sc;
+  }
 
   debug() << "Reading file: " << m_filename << endmsg;
 
