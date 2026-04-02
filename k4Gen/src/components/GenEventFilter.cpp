@@ -1,13 +1,17 @@
 #include "GenEventFilter.h"
 
+#include "k4FWCore/MetadataUtils.h"
+
 // Gaudi
 #include "GaudiKernel/IEventProcessor.h"
+#include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/Incident.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/StatusCode.h"
 
 // Datamodel
+#include "edm4hep/Constants.h"
 #include "edm4hep/MCParticleCollection.h"
 
 // ROOT
@@ -162,7 +166,8 @@ StatusCode GenEventFilter::execute(const EventContext&) const {
 StatusCode GenEventFilter::finalize() {
   debug() << "Number of events seen: " << m_nEventsSeen << endmsg;
 
-  m_evtFilterStats.put({m_nEventsSeen, m_nEventsAccepted, m_nEventsTarget});
+  k4FWCore::putParameter(edm4hep::labels::EventFilterStats,
+                         std::vector<int>{m_nEventsSeen, m_nEventsAccepted, m_nEventsTarget}, this);
 
   return Gaudi::Algorithm::finalize();
 }
