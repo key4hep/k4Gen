@@ -9,10 +9,8 @@ class IEventProcessor;
 
 // k4FWCore
 #include "k4FWCore/DataHandle.h"
-#include "k4FWCore/MetadataUtils.h"
 
 // Datamodel
-#include "edm4hep/Constants.h"
 #include "edm4hep/MCParticleCollection.h"
 
 /** @class GenEventFilter Generation/src/components/GenEventFilter.h GenEventFilter.h

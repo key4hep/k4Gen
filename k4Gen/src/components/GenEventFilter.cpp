@@ -1,5 +1,7 @@
 #include "GenEventFilter.h"
 
+#include "k4FWCore/MetadataUtils.h"
+
 // Gaudi
 #include "GaudiKernel/IEventProcessor.h"
 #include "GaudiKernel/IIncidentSvc.h"
@@ -9,6 +11,7 @@
 #include "GaudiKernel/StatusCode.h"
 
 // Datamodel
+#include "edm4hep/Constants.h"
 #include "edm4hep/MCParticleCollection.h"
 
 // ROOT
