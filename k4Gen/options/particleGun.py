@@ -1,8 +1,8 @@
 from Gaudi.Configuration import *
 from GaudiKernel import SystemOfUnits as units
 
-from Configurables import ApplicationMgr, EventDataSvc
-from k4FWCore import IOSvc
+from Configurables import EventDataSvc
+from k4FWCore import ApplicationMgr, IOSvc
 ApplicationMgr(
                EvtSel='NONE',
                EvtMax=1,

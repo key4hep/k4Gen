@@ -5,22 +5,28 @@
 find_package(HepMC3 REQUIRED)
 find_package(Pythia8 COMPONENTS pythia8 pythia8tohepmc)
 find_package(HepPDT REQUIRED)
-find_package(EvtGen REQUIRED)
+# find_package(EvtGen REQUIRED)
 
 file(GLOB k4gen_plugin_sources src/components/*.cpp)
+# Remove PythiaInterface.cpp
+list(REMOVE_ITEM k4gen_plugin_sources ${CMAKE_CURRENT_LIST_DIR}/src/components/PythiaInterface.cpp)
+list(REMOVE_ITEM k4gen_plugin_sources ${CMAKE_CURRENT_LIST_DIR}/src/components/ResonanceDecayFilterHook.cpp)
+list(REMOVE_ITEM k4gen_plugin_sources ${CMAKE_CURRENT_LIST_DIR}/src/components/ConstPtParticleGun.cpp)
+
 gaudi_add_module(k4Gen
                  SOURCES ${k4gen_plugin_sources}
                  LINK Gaudi::GaudiKernel 
                       ${HEPMC3_LIBRARIES}
                       k4FWCore::k4FWCore
                       HepPDT::heppdt
-                      EvtGen::EvtGen
-                      EvtGen::EvtGenExternal
+                      # EvtGen::EvtGen
+                      # EvtGen::EvtGenExternal
                       EDM4HEP::edm4hep
                       ROOT::Hist
                       )
 
-target_include_directories(k4Gen PUBLIC ${PYTHIA8_INCLUDE_DIRS} 
+                      target_include_directories(k4Gen PUBLIC
+                        ${PYTHIA8_INCLUDE_DIRS} 
                                         ${HEPMC3_INCLUDE_DIR}
 					${HEPMC_INCLUDE_DIR}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>

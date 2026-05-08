@@ -10,8 +10,8 @@ from GaudiKernel import SystemOfUnits as units
 from Gaudi.Configuration import *
 from edm4hep import labels as e4_labels
 
-from Configurables import ApplicationMgr, EventDataSvc
-from k4FWCore import IOSvc
+from Configurables import EventDataSvc
+from k4FWCore import ApplicationMgr, IOSvc
 ApplicationMgr().EvtSel = 'NONE'
 ApplicationMgr().EvtMax = 2
 ApplicationMgr().OutputLevel = INFO

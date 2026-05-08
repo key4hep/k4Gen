@@ -10,9 +10,9 @@ import os
 from GaudiKernel import SystemOfUnits as units
 from Gaudi.Configuration import INFO, DEBUG
 
-from Configurables import ApplicationMgr, EventDataSvc
+from Configurables import EventDataSvc
 from Configurables import GaussSmearVertex, PythiaInterface, GenAlg
-from k4FWCore import IOSvc
+from k4FWCore import ApplicationMgr, IOSvc
 from Configurables import HepMCToEDMConverter, GenParticleFilter
 from Configurables import GenEventFilter
 from edm4hep import labels as e4_labels
