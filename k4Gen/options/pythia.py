@@ -15,7 +15,7 @@ from k4FWCore import ApplicationMgr, IOSvc
 ApplicationMgr().EvtSel = 'NONE'
 ApplicationMgr().EvtMax = 2
 ApplicationMgr().OutputLevel = INFO
-ApplicationMgr().ExtSvc += ["RndmGenSvc", EventDataSvc()]
+ApplicationMgr().ExtSvc += ["RndmGenSvc", EventDataSvc("EventDataSvc")]
 
 from Configurables import GaussSmearVertex
 smeartool = GaussSmearVertex()

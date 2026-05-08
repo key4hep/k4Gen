@@ -24,7 +24,7 @@ ApplicationMgr( #TopAlg = [mdi_converter, geantsim],
                 EvtSel = 'NONE',
                 EvtMax   = 1,
                 # order is important, as GeoSvc is needed by SimG4Svc
-                #ExtSvc = [EventDataSvc(), geoservice, geantservice],
-                ExtSvc = [EventDataSvc()],
+                #ExtSvc = [EventDataSvc("EventDataSvc"), geoservice, geantservice],
+                ExtSvc = [EventDataSvc("EventDataSvc")],
                 OutputLevel=INFO
                )

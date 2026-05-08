@@ -22,7 +22,7 @@ ApplicationMgr().EvtMax = 20
 ApplicationMgr().OutputLevel = INFO
 ApplicationMgr().ExtSvc += ["RndmGenSvc"]
 
-ApplicationMgr().ExtSvc += [EventDataSvc()]
+ApplicationMgr().ExtSvc += [EventDataSvc("EventDataSvc")]
 
 smeartool = GaussSmearVertex()
 smeartool.xVertexSigma = 0.5 * units.mm

@@ -7,7 +7,7 @@ ApplicationMgr(
                EvtSel='NONE',
                EvtMax=1,
                OutputLevel=INFO,
-               ExtSvc=[EventDataSvc()],
+               ExtSvc=[EventDataSvc("EventDataSvc")],
               )
 
 from edm4hep import labels as e4_labels
