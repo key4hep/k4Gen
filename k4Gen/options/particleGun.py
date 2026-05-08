@@ -1,20 +1,16 @@
 from Gaudi.Configuration import *
 from GaudiKernel import SystemOfUnits as units
 
-from Configurables import ApplicationMgr
+from Configurables import ApplicationMgr, EventDataSvc
+from k4FWCore import IOSvc
 ApplicationMgr(
                EvtSel='NONE',
                EvtMax=1,
                OutputLevel=INFO,
+               ExtSvc=[EventDataSvc()],
               )
 
-from Configurables import k4DataSvc
 from edm4hep import labels as e4_labels
-
-podioevent = k4DataSvc("EventDataSvc")
-ApplicationMgr().ExtSvc += [podioevent]
-
-
 
 from Configurables import ConstPtParticleGun
 guntool1 = ConstPtParticleGun("SignalProvider", PdgCodes=[-211], PtMin=50, PtMax=50)
@@ -61,10 +57,9 @@ THistSvc().AutoSave=True
 THistSvc().AutoFlush=True
 THistSvc().OutputLevel=INFO
 
-from Configurables import PodioOutput
-out = PodioOutput("out", filename = "output_particleGun.root")
-out.outputCommands = ["keep *"]
-ApplicationMgr().TopAlg += [out]
+iosvc = IOSvc()
+iosvc.Output = "output_particleGun.root"
+iosvc.outputCommands = ["keep *"]
 
 
 

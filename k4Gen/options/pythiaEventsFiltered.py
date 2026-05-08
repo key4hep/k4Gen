@@ -10,8 +10,9 @@ import os
 from GaudiKernel import SystemOfUnits as units
 from Gaudi.Configuration import INFO, DEBUG
 
-from Configurables import ApplicationMgr, k4DataSvc, PodioOutput
+from Configurables import ApplicationMgr, EventDataSvc
 from Configurables import GaussSmearVertex, PythiaInterface, GenAlg
+from k4FWCore import IOSvc
 from Configurables import HepMCToEDMConverter, GenParticleFilter
 from Configurables import GenEventFilter
 from edm4hep import labels as e4_labels
@@ -21,9 +22,7 @@ ApplicationMgr().EvtMax = 20
 ApplicationMgr().OutputLevel = INFO
 ApplicationMgr().ExtSvc += ["RndmGenSvc"]
 
-# Data service
-podioevent = k4DataSvc("EventDataSvc")
-ApplicationMgr().ExtSvc += [podioevent]
+ApplicationMgr().ExtSvc += [EventDataSvc()]
 
 smeartool = GaussSmearVertex()
 smeartool.xVertexSigma = 0.5 * units.mm
@@ -68,6 +67,6 @@ eventfilter.filterRulePath = "k4Gen/options/filterRule.hxx"
 eventfilter.OutputLevel = DEBUG
 ApplicationMgr().TopAlg += [eventfilter]
 
-out = PodioOutput("out")
-out.outputCommands = ["keep *"]
-ApplicationMgr().TopAlg += [out]
+iosvc = IOSvc()
+iosvc.Output = "output_pythiaEventsFiltered.root"
+iosvc.outputCommands = ["keep *"]
