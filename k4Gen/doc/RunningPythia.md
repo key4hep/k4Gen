@@ -78,5 +78,4 @@ from the generated particles. The configuration runs five algorithms:
 - HepMCConverter: Translates HepMC output of PythiaInterface to FCC-EDM
 - GenParticleFilter: Filters the generated particles
 - JetClustering: Does the clustering of generated particles to `GenJets`
-- PodioOutput: Saves the FCC-EDM collections to the ROOT file
 
