@@ -10,6 +10,13 @@ ApplicationMgr(
                ExtSvc=[EventDataSvc("EventDataSvc")],
               )
 
+from Configurables import EventHeaderCreator
+eventHeaderCreator = EventHeaderCreator(
+    "eventHeaderCreator", runNumber=42, eventNumberOffset=42
+)
+ApplicationMgr().TopAlg += [eventHeaderCreator]
+
+
 from edm4hep import labels as e4_labels
 
 from Configurables import ConstPtParticleGun
