@@ -24,6 +24,13 @@ ApplicationMgr().ExtSvc += ["RndmGenSvc"]
 
 ApplicationMgr().ExtSvc += [EventDataSvc("EventDataSvc")]
 
+from Configurables import EventHeaderCreator
+eventHeaderCreator = EventHeaderCreator(
+    "eventHeaderCreator", runNumber=42, eventNumberOffset=42
+)
+ApplicationMgr().TopAlg += [eventHeaderCreator]
+
+
 smeartool = GaussSmearVertex()
 smeartool.xVertexSigma = 0.5 * units.mm
 smeartool.yVertexSigma = 0.5 * units.mm
