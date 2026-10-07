@@ -1,7 +1,6 @@
 #include "FlatSmearVertex.h"
 
 #include "GaudiKernel/IRndmGenSvc.h"
-#include "GaudiKernel/PhysicalConstants.h"
 #include "GaudiKernel/Vector4DTypes.h"
 
 #include "HepMC3/GenEvent.h"
@@ -78,7 +77,8 @@ StatusCode FlatSmearVertex::smearVertex(HepMC3::GenEvent& theEvent) {
   dx = m_xmin + m_flatDist() * (m_xmax - m_xmin);
   dy = m_ymin + m_flatDist() * (m_ymax - m_ymin);
   dz = m_zmin + m_flatDist() * (m_zmax - m_zmin);
-  dt = m_zDir * dz / Gaudi::Units::c_light;
+  // the beam reaches z at t = z/c; HepMC3 stores c*t as a length
+  dt = m_zDir * dz;
 
   Gaudi::LorentzVector dpos(dx, dy, dz, dt);
 
