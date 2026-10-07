@@ -60,11 +60,8 @@ StatusCode GaussSmearVertex::smearVertex(HepMC3::GenEvent& theEvent) {
 
   debug() << "Smearing vertices by " << dpos << endmsg;
 
-  for (auto vit : theEvent.vertices()) {
-    Gaudi::LorentzVector pos(vit->position());
-    pos += dpos;
-    vit->set_position(HepMC3::FourVector(pos.x(), pos.y(), pos.z(), pos.t()));
-  }
+  // Shift all vertices and the event position (production vertex of the beam particles)
+  theEvent.shift_position_by(HepMC3::FourVector(dpos.x(), dpos.y(), dpos.z(), dpos.t()));
 
   return StatusCode::SUCCESS;
 }
