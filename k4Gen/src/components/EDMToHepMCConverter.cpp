@@ -29,12 +29,14 @@ StatusCode EDMToHepMCConverter::execute(const EventContext&) const {
   for (auto p : *particles) {
     if (p.getGeneratorStatus() == 1) { // only final state particles
       const auto& mom = p.getMomentum();
-      auto pHepMC = std::make_shared<GenParticle>(HepMC3::FourVector(mom.x, mom.y, mom.z, p.getMass()), p.getPDG(),
+      auto pHepMC = std::make_shared<GenParticle>(HepMC3::FourVector(mom.x, mom.y, mom.z, p.getEnergy()), p.getPDG(),
                                                   p.getGeneratorStatus()); // hepmc status code for final state particle
+      pHepMC->set_generated_mass(p.getMass());
 
       const auto& pos = p.getVertex();
+      // HepMC3 stores c*t as a length, EDM4hep the time in ns
       auto v = std::make_shared<HepMC3::GenVertex>(
-          HepMC3::FourVector(pos.x, pos.y, pos.z, p.getTime() / Gaudi::Units::c_light));
+          HepMC3::FourVector(pos.x, pos.y, pos.z, p.getTime() * Gaudi::Units::c_light));
 
       v->add_particle_out(pHepMC);
       event->add_vertex(v);
