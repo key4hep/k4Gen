@@ -1,6 +1,8 @@
 #include "HepMCToEDMConverter.h"
 // HepMC
 #include "HepMC3/GenVertex.h"
+// std
+#include <unordered_map>
 // HepPDT
 #include "HepPDT/ParticleID.hh"
 // EDM4hep
@@ -22,7 +24,7 @@ HepMCToEDMConverter::convert(std::shared_ptr<const HepMC3::GenParticle> hepmcPar
   edm_particle.setMass(hepmcParticle->generated_mass());
 
 #ifdef EDM4HEP_MCPARTICLE_HAS_HELICITY
-  // TODO: Figure out what we want to store here and how to retrieve it from HepMC3
+  edm_particle.setHelicity(0);
 #else
   // add spin (particle helicity) information if available
   std::shared_ptr<HepMC3::VectorFloatAttribute> spin = hepmcParticle->attribute<HepMC3::VectorFloatAttribute>("spin");
@@ -33,14 +35,21 @@ HepMCToEDMConverter::convert(std::shared_ptr<const HepMC3::GenParticle> hepmcPar
 #endif
 
   // convert vertex info
+  // pos.t() is c*t in HepMC length units (mm); divide by c_light [mm/ns] to get time in ns
+  static constexpr double c_light_mm_ns = 299.792458;
+
   auto prodVtx = hepmcParticle->production_vertex();
+  auto endVtx  = hepmcParticle->end_vertex();
 
   if (prodVtx != nullptr) {
     auto& pos = prodVtx->position();
     edm_particle.setVertex({pos.x(), pos.y(), pos.z()});
+    // Beam particles have prodVtx at the origin (t=0); use end vertex time so the
+    // interaction time is correctly propagated to Geant4.
+    const double t = (pos.t() == 0.0 && endVtx != nullptr ? endVtx->position().t() : pos.t()) / c_light_mm_ns;
+    edm_particle.setTime(t);
   }
 
-  auto endVtx = hepmcParticle->end_vertex();
   if (endVtx != nullptr) {
     auto& pos = endVtx->position();
     edm_particle.setEndpoint({pos.x(), pos.y(), pos.z()});
@@ -55,13 +64,14 @@ HepMCToEDMConverter::HepMCToEDMConverter(const std::string& name, ISvcLocator* s
   declareProperty("GenParticles", m_genphandle, "Generated particles collection (output)");
 }
 
-StatusCode HepMCToEDMConverter::initialize() { return Gaudi::Algorithm::initialize(); }
-
 StatusCode HepMCToEDMConverter::execute(const EventContext&) const {
   const HepMC3::GenEvent* evt = m_hepmchandle.get();
   edm4hep::MCParticleCollection* particles = new edm4hep::MCParticleCollection();
 
+  // unordered_map for O(1) lookups; ordering is recovered in the flush loop below
+  // by re-iterating evt->particles(), which HepMC3 guarantees is in sequential ID order.
   std::unordered_map<unsigned int, edm4hep::MutableMCParticle> _map;
+  _map.reserve(evt->particles().size());
   for (auto _p : evt->particles()) {
     verbose() << "Converting HepMC particle with PDG ID \"" << _p->pdg_id() << "\" and ID \"" << _p->id() << "\""
               << endmsg;
@@ -91,8 +101,9 @@ StatusCode HepMCToEDMConverter::execute(const EventContext&) const {
       }
     }
   }
-  for (auto particle_pair : _map) {
-    particles->push_back(particle_pair.second);
+  // Flush in HepMC3 ID order: evt->particles() is already in sequential ID order.
+  for (auto _p : evt->particles()) {
+    particles->push_back(_map[_p->id()]);
   }
   m_genphandle.put(particles);
   return StatusCode::SUCCESS;
