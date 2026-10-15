@@ -54,7 +54,8 @@ StatusCode GaussSmearVertex::smearVertex(HepMC3::GenEvent& theEvent) {
   double dx = m_gaussDist() * m_xsig + m_xmean;
   double dy = m_gaussDist() * m_ysig + m_ymean;
   double dz = m_gaussDist() * m_zsig + m_zmean;
-  double dt = m_gaussDist() * m_tsig + m_tmean;
+  // HepMC3 stores c*t as a length
+  double dt = (m_gaussDist() * m_tsig + m_tmean) * Gaudi::Units::c_light;
 
   Gaudi::LorentzVector dpos(dx, dy, dz, dt);
 

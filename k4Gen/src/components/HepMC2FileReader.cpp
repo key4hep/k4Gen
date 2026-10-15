@@ -30,6 +30,8 @@ StatusCode HepMC2FileReader::getNextEvent(HepMC3::GenEvent& event) {
     error() << "Premature end of file: Please set the number of events according to hepMC file." << endmsg;
     return StatusCode::FAILURE;
   }
+  // read_event takes the units from the file, convert them to GeV and mm
+  event.set_units(HepMC3::Units::GEV, HepMC3::Units::MM);
   return StatusCode::SUCCESS;
 }
 
