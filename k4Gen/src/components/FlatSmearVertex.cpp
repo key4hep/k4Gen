@@ -1,6 +1,7 @@
 #include "FlatSmearVertex.h"
 
 #include "GaudiKernel/IRndmGenSvc.h"
+#include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/Vector4DTypes.h"
 
 #include "HepMC3/GenEvent.h"
