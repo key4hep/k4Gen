@@ -4,6 +4,7 @@
 #include "GaudiKernel/IEventProcessor.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Incident.h"
+#include "GaudiKernel/PhysicalConstants.h"
 
 #include "edm4hep/MCParticleCollection.h"
 
@@ -191,7 +192,8 @@ StatusCode MDIReader::execute(const EventContext&) const {
         VHEP2,
         VHEP3,
     });
-    particle.setTime(VHEP4);
+    // VHEP4 is c*t in mm, EDM4hep stores the time in ns
+    particle.setTime(VHEP4 / Gaudi::Units::c_light);
     pcount++;
 
     debug() << "Read in particle (" << pcount << "):" << endmsg;
