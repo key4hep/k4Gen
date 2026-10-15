@@ -21,8 +21,6 @@ class HepMCToEDMConverter : public Gaudi::Algorithm {
 public:
   /// Constructor.
   HepMCToEDMConverter(const std::string& name, ISvcLocator* svcLoc);
-  /// Initialize.
-  virtual StatusCode initialize();
   /// Execute.
   virtual StatusCode execute(const EventContext&) const;
   /// Finalize.
