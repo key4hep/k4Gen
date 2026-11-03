@@ -9,13 +9,14 @@ find_package(Gaudi REQUIRED)
 find_package(k4FWCore 1.3 REQUIRED)
 find_package(EDM4HEP REQUIRED)
 
+include(GNUInstallDirs)
+
 include(cmake/Key4hepConfig.cmake)
 
 # use FindHEPPDT from Gaudi (used when finding heppdt later)
 set(CMAKE_MODULE_PATH ${Gaudi_LIBRARY_DIR}/cmake/Gaudi/modules ${CMAKE_MODULE_PATH})
 
 #---------------------------------------------------------------
-include(GNUInstallDirs)
 include(CTest)
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
