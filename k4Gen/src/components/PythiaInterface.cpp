@@ -13,6 +13,7 @@
 #include "HepMC3/GenEvent.h"
 #include "Pythia8Plugins/EvtGen.h"
 #include "Pythia8Plugins/aMCatNLOHooks.h"
+#include "edm4hep/Constants.h"
 #include "k4FWCore/MetadataUtils.h"
 
 DECLARE_COMPONENT(PythiaInterface)
@@ -166,9 +167,7 @@ StatusCode PythiaInterface::initialize() {
 
   m_pythiaSignal->init();
 
-  info() << "Recording generator random seed " << m_pythiaSignal->settings.mode("Random:seed")
-         << " in output metadata" << endmsg;
-  k4FWCore::putParameter("GeneratorRandomSeed", m_pythiaSignal->settings.mode("Random:seed"), this);
+  k4FWCore::putParameter(edm4hep::labels::GeneratorRandomSeed, m_pythiaSignal->settings.mode("Random:seed"), this);
 
   return StatusCode::SUCCESS;
 }
