@@ -1,4 +1,6 @@
 #include "HepMCToEDMConverter.h"
+// Gaudi
+#include "GaudiKernel/PhysicalConstants.h"
 // HepMC
 #include "HepMC3/GenVertex.h"
 // std
@@ -35,16 +37,14 @@ HepMCToEDMConverter::convert(std::shared_ptr<const HepMC3::GenParticle> hepmcPar
 #endif
 
   // convert vertex info
-  // pos.t() is c*t in HepMC length units (mm); divide by c_light [mm/ns] to get time in ns
-  static constexpr double c_light_mm_ns = 299.792458;
-
   auto prodVtx = hepmcParticle->production_vertex();
   auto endVtx  = hepmcParticle->end_vertex();
 
   if (prodVtx != nullptr) {
     auto& pos = prodVtx->position();
     edm_particle.setVertex({pos.x(), pos.y(), pos.z()});
-    edm_particle.setTime(pos.t() / c_light_mm_ns);
+    // HepMC3 stores c*t as a length, EDM4hep the time in ns
+    edm_particle.setTime(pos.t() / Gaudi::Units::c_light);
   }
 
   if (endVtx != nullptr) {
