@@ -3,15 +3,18 @@
 
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/PhysicalConstants.h"
-#include "GaudiKernel/RndmGenerators.h"
+#include "GaudiKernel/SmartIF.h"
 
 #include "Generation/IVertexSmearingTool.h"
+#include "k4Interface/IUniqueIDGenSvc.h"
 
 /** @class GaussSmearVertex GaussSmearVertex.h "GaussSmearVertex.h"
  *
  *  Tool to smear vertex with gaussian smearing along the x- y- z- and t-axis.
  *  Concrete implementation of a IVertexSmearingTool.
  *
+ *  Seeded per-event via UniqueIDGenSvc, rather than the shared/global
+ *  RndmGenSvc, so smearing is reproducible and independent of event order.
  */
 class GaussSmearVertex : public AlgTool, virtual public IVertexSmearingTool {
 public:
@@ -25,7 +28,7 @@ public:
 
   /** Implements IVertexSmearingTool::smearVertex.
    */
-  virtual StatusCode smearVertex(HepMC3::GenEvent& theEvent);
+  virtual StatusCode smearVertex(HepMC3::GenEvent& theEvent, const EventContext& ctx);
 
 private:
   Gaudi::Property<double> m_xsig{this, "xVertexSigma", 0.0 * Gaudi::Units::mm, "Spread of x coordinate"};
@@ -38,7 +41,7 @@ private:
   Gaudi::Property<double> m_zmean{this, "zVertexMean", 0.0 * Gaudi::Units::mm, "Mean of z coordinate"};
   Gaudi::Property<double> m_tmean{this, "tVertexMean", 0.0 * Gaudi::Units::ns, "Mean of t coordinate"};
 
-  Rndm::Numbers m_gaussDist;
+  SmartIF<IUniqueIDGenSvc> m_uniqueIDSvc;
 };
 
 #endif // GENERATION_GAUSSSMEARVERTEX_H

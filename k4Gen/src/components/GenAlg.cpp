@@ -54,7 +54,7 @@ StatusCode GenAlg::initialize() {
   return StatusCode::SUCCESS;
 }
 
-StatusCode GenAlg::execute(const EventContext&) const {
+StatusCode GenAlg::execute(const EventContext& ctx) const {
   // Create empty event
   HepMC3::GenEvent* theEvent = m_hepmcHandle.createAndPut();
   theEvent->set_units(HepMC3::Units::GEV, HepMC3::Units::MM);
@@ -68,7 +68,7 @@ StatusCode GenAlg::execute(const EventContext&) const {
 
   // Smear vertex
   {
-    StatusCode sc = m_vertexSmearingTool->smearVertex(*theEvent);
+    StatusCode sc = m_vertexSmearingTool->smearVertex(*theEvent, ctx);
     if (!sc.isSuccess())
       return sc;
   }
