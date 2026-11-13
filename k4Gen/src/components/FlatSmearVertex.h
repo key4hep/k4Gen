@@ -2,10 +2,11 @@
 #define GENERATION_FLATSMEARVERTEX_H
 
 #include "GaudiKernel/AlgTool.h"
-#include "GaudiKernel/RndmGenerators.h"
+#include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/SystemOfUnits.h"
 
 #include "Generation/IVertexSmearingTool.h"
+#include "k4Interface/IUniqueIDGenSvc.h"
 
 #include "HepMC3/GenEvent.h"
 
@@ -17,6 +18,9 @@
  *  @author Patrick Robbe
  *  @author Daniel Funke
  *  @date   2008-05-18
+ *
+ *  Seeded per-event via UniqueIDGenSvc, rather than the shared/global
+ *  RndmGenSvc, so smearing is reproducible and independent of event order.
  */
 class FlatSmearVertex : public AlgTool, virtual public IVertexSmearingTool {
 public:
@@ -30,7 +34,7 @@ public:
 
   /** Implements IVertexSmearingTool::smearVertex.
    */
-  virtual StatusCode smearVertex(HepMC3::GenEvent& theEvent);
+  virtual StatusCode smearVertex(HepMC3::GenEvent& theEvent, const EventContext& ctx);
 
 private:
   /// Minimum value for the x coordinate of the vertex (set by options)
@@ -56,8 +60,7 @@ private:
   /// interaction to zero (default = 1, as for beam 1)
   Gaudi::Property<int> m_zDir{this, "beamDirection", 1, "Direction of the beam, possible values: -1, 1 or 0"};
 
-  /// Flat random number generator
-  Rndm::Numbers m_flatDist;
+  SmartIF<IUniqueIDGenSvc> m_uniqueIDSvc;
 };
 
 #endif // GENERATION_FLATSMEARVERTEX_H
