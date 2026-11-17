@@ -187,9 +187,9 @@ StatusCode PythiaInterface::getNextEvent(HepMC3::GenEvent& theEvent) {
     }
   }
 
-  ++m_nEventsGenerated;
+  const unsigned long int nEventsGenerated = ++m_nEventsGenerated;
 
-  if (m_printPythiaStatisticsEveryNEvents > 0 && m_nEventsGenerated % m_printPythiaStatisticsEveryNEvents == 0) {
+  if (m_printPythiaStatisticsEveryNEvents > 0 && nEventsGenerated % m_printPythiaStatisticsEveryNEvents == 0) {
     m_pythiaSignal->stat();
   }
 

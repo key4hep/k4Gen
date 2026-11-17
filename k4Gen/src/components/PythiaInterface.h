@@ -8,6 +8,7 @@
 #include "Pythia8Plugins/PowhegHooks.h"
 #include "ResonanceDecayFilterHook.h"
 #include "k4FWCore/DataHandle.h"
+#include <atomic>
 #include <memory>
 
 // Forward HepMC
@@ -67,7 +68,7 @@ private:
   int m_maxAborts{0};
 
   /// Number of events generated so far, used by printPythiaStatisticsEveryNEvents
-  unsigned long int m_nEventsGenerated{0};
+  std::atomic<unsigned long int> m_nEventsGenerated{0};
 
   // -- aMCatNLO
   bool m_doMePsMatching{false};
