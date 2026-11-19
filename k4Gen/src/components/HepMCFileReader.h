@@ -6,7 +6,7 @@
 #include "Generation/IHepMCProviderTool.h"
 
 #include "HepMC3/GenEvent.h"
-#include "HepMC3/ReaderAscii.h"
+#include "HepMC3/Reader.h"
 
 class HepMCFileReader : public AlgTool, virtual public IHepMCProviderTool {
 public:
@@ -23,8 +23,10 @@ public:
 
 private:
   void close();
+
   Gaudi::Property<std::string> m_filename{this, "Filename", "", "Name of the HepMC file to read"};
-  std::unique_ptr<HepMC3::ReaderAscii> m_file;
+
+  std::shared_ptr<HepMC3::Reader> m_file;
 };
 
 #endif // GENERATION_HEPMCFILEREADER_H

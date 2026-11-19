@@ -5,9 +5,10 @@
 
 #include "k4FWCore/DataHandle.h"
 
+#include "HepMC3/Writer.h"
+
 namespace HepMC3 {
 class GenEvent;
-class WriterAscii;
 } // namespace HepMC3
 
 /**
@@ -35,8 +36,11 @@ public:
 private:
   /// Handle for the HepMC to be read
   mutable k4FWCore::DataHandle<HepMC3::GenEvent> m_hepmchandle{"HepMC", Gaudi::DataHandle::Reader, this};
-  Gaudi::Property<std::string> m_filename{this, "Filename", "Output_HepMC.dat", "Name of the HepMC file to write"};
-  std::unique_ptr<HepMC3::WriterAscii> m_file;
+  Gaudi::Property<std::string> m_filename{this, "Filename", "gen_output.hepmc", "Name of the HepMC file to write"};
+  Gaudi::Property<std::string> m_format{this, "Format", "Ascii",
+                                        "Output format: Ascii, Compressed (gzip-compressed ASCII), "
+                                        "or RootTree (ROOT TTree)"};
+  std::unique_ptr<HepMC3::Writer> m_file;
 };
 
 #endif // GENERATION_HEPMCFILEWRITER_H
