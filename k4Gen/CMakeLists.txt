@@ -6,11 +6,12 @@ find_package(HepMC3 REQUIRED)
 find_package(Pythia8 COMPONENTS pythia8 pythia8tohepmc)
 find_package(HepPDT REQUIRED)
 find_package(EvtGen REQUIRED)
+find_package(ZLIB REQUIRED)
 
 file(GLOB k4gen_plugin_sources src/components/*.cpp)
 gaudi_add_module(k4Gen
                  SOURCES ${k4gen_plugin_sources}
-                 LINK Gaudi::GaudiKernel 
+                 LINK Gaudi::GaudiKernel
                       ${HEPMC3_LIBRARIES}
                       k4FWCore::k4FWCore
                       HepPDT::heppdt
@@ -18,7 +19,12 @@ gaudi_add_module(k4Gen
                       EvtGen::EvtGenExternal
                       EDM4HEP::edm4hep
                       ROOT::Hist
+                      ZLIB::ZLIB
                       )
+
+# HepMC3's gzip support is header-only and opt-in: these macros must be
+# defined by the consumer (see https://gitlab.cern.ch/hepmc/HepMC3/-/issues/99).
+target_compile_definitions(k4Gen PRIVATE HEPMC3_USE_COMPRESSION=1 HEPMC3_Z_SUPPORT=1)
 
 target_include_directories(k4Gen PUBLIC ${PYTHIA8_INCLUDE_DIRS} 
                                         ${HEPMC3_INCLUDE_DIR}
