@@ -1,12 +1,13 @@
 #include "FlatSmearVertex.h"
 
-#include "GaudiKernel/IRndmGenSvc.h"
 #include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/Vector4DTypes.h"
 
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenParticle.h"
 #include "HepMC3/GenVertex.h"
+
+#include <random>
 
 /// Declaration of the Tool Factory
 DECLARE_COMPONENT(FlatSmearVertex)
@@ -28,7 +29,11 @@ StatusCode FlatSmearVertex::initialize() {
   if (sc.isFailure())
     return sc;
 
-  auto randSvc = service<IRndmGenSvc>("RndmGenSvc", true);
+  m_uniqueIDSvc = service("UniqueIDGenSvc");
+  if (!m_uniqueIDSvc) {
+    error() << "Unable to locate the UniqueIDGenSvc" << endmsg;
+    return StatusCode::FAILURE;
+  }
   if (m_xmin > m_xmax) {
     error() << "xMin > xMax !";
     return StatusCode::FAILURE;
@@ -41,8 +46,6 @@ StatusCode FlatSmearVertex::initialize() {
     error() << "zMin > zMax !";
     return StatusCode::FAILURE;
   }
-
-  sc = m_flatDist.initialize(randSvc, Rndm::Flat(0., 1.));
 
   std::string infoMsg = " applying TOF of interaction with ";
   if (m_zDir == -1) {
@@ -63,21 +66,20 @@ StatusCode FlatSmearVertex::initialize() {
          << m_ymin / Gaudi::Units::mm << " mm <= y <= " << m_ymax / Gaudi::Units::mm << " mm and "
          << m_zmin / Gaudi::Units::mm << " mm <= z <= " << m_zmax / Gaudi::Units::mm << " mm." << endmsg;
 
-  if (!sc.isSuccess()) {
-    error() << "Could not initialize flat random number generator";
-    return StatusCode::FAILURE;
-  }
-
   return sc;
 }
 
 /// Smearing function
-StatusCode FlatSmearVertex::smearVertex(HepMC3::GenEvent& theEvent) {
+StatusCode FlatSmearVertex::smearVertex(HepMC3::GenEvent& theEvent, const EventContext& ctx) {
   double dx, dy, dz, dt;
 
-  dx = m_xmin + m_flatDist() * (m_xmax - m_xmin);
-  dy = m_ymin + m_flatDist() * (m_ymax - m_ymin);
-  dz = m_zmin + m_flatDist() * (m_zmax - m_zmin);
+  const size_t uid = m_uniqueIDSvc->getUniqueID(ctx.evt(), 0, name());
+  std::mt19937_64 engine(uid);
+  std::uniform_real_distribution<double> flatDist(0., 1.);
+
+  dx = m_xmin + flatDist(engine) * (m_xmax - m_xmin);
+  dy = m_ymin + flatDist(engine) * (m_ymax - m_ymin);
+  dz = m_zmin + flatDist(engine) * (m_zmax - m_zmin);
   // the beam reaches z at t = z/c; HepMC3 stores c*t as a length
   dt = m_zDir * dz;
 
