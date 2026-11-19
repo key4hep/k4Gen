@@ -37,8 +37,9 @@ private:
   /// Handle for the HepMC to be read
   mutable k4FWCore::DataHandle<HepMC3::GenEvent> m_hepmchandle{"HepMC", Gaudi::DataHandle::Reader, this};
   Gaudi::Property<std::string> m_filename{this, "Filename", "gen_output.hepmc", "Name of the HepMC file to write"};
-  Gaudi::Property<bool> m_compressed{this, "Compressed", false,
-                                     "Write a gzip-compressed file instead of plain ASCII"};
+  Gaudi::Property<std::string> m_format{this, "Format", "Ascii",
+                                        "Output format: Ascii, Compressed (gzip-compressed ASCII), "
+                                        "or RootTree (ROOT TTree)"};
   std::unique_ptr<HepMC3::Writer> m_file;
 };
 
