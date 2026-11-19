@@ -5,7 +5,6 @@
 #include "Generation/IHepMCProviderTool.h"
 #include "Generation/IVertexSmearingTool.h"
 #include "Pythia8Plugins/HepMC3.h"
-#include "Pythia8Plugins/PowhegHooks.h"
 #include "ResonanceDecayFilterHook.h"
 #include "k4FWCore/DataHandle.h"
 #include <memory>
@@ -17,22 +16,16 @@ class GenEvent;
 // Forward Pythia
 #if PYTHIA_VERSION_INTEGER < 8300
 class EvtGenDecays;
-namespace Pythia8 {
-class Pythia;
-class SlowJet;
-class JetMatchingMadgraph;
-class amcnlo_unitarised_interface;
-} // namespace Pythia8
-#else
-namespace Pythia8 {
-class EvtGenDecays;
-class Pythia;
-class SlowJet;
-class JetMatchingMadgraph;
-class amcnlo_unitarised_interface;
-} // namespace Pythia8
-
 #endif
+namespace Pythia8 {
+#if PYTHIA_VERSION_INTEGER >= 8300
+class EvtGenDecays;
+#endif
+class Pythia;
+class SlowJet;
+class JetMatchingMadgraph;
+class PowhegHooks;
+} // namespace Pythia8
 
 class PythiaInterface : public AlgTool, virtual public IHepMCProviderTool {
 
@@ -70,9 +63,7 @@ private:
   bool m_doMePsMatching{false};
   bool m_doMePsMerging{false};
   /// Pythia8 engine for ME/PS matching
-  std::unique_ptr<Pythia8::JetMatchingMadgraph> m_matching{nullptr};
-  /// Pythia8 engine for NLO ME/PS merging
-  std::unique_ptr<Pythia8::amcnlo_unitarised_interface> m_setting{nullptr};
+  std::shared_ptr<Pythia8::JetMatchingMadgraph> m_matching{nullptr};
 
   // Powheg
   bool m_doPowheg{false};

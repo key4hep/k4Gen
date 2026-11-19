@@ -1,18 +1,21 @@
+// The Pythia hooks are used directly, not as runtime-loaded plugins.
+#define NOPLUGIN
+
 #include "PythiaInterface.h"
 
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Incident.h"
 #include "GaudiKernel/System.h"
-
-#include "Pythia8/Pythia.h"
-// Include UserHooks for Jet Matching.
-#include "Pythia8Plugins/CombineMatchingInput.h"
-#include "Pythia8Plugins/JetMatching.h"
-// Include UserHooks for randomly choosing between integrated and
-// non-integrated treatment for unitarised merging.
 #include "HepMC3/GenEvent.h"
+#include "Pythia8/Pythia.h"
 #include "Pythia8Plugins/EvtGen.h"
+#include "Pythia8Plugins/PowhegHooks.h"
 #include "Pythia8Plugins/aMCatNLOHooks.h"
+#if PYTHIA_VERSION_INTEGER >= 8318
+#include "Pythia8Plugins/JetMatchingHooks.h"
+#else
+#include "Pythia8Plugins/JetMatching.h"
+#endif
 #include "edm4hep/Constants.h"
 #include "k4FWCore/MetadataUtils.h"
 
@@ -20,7 +23,7 @@ DECLARE_COMPONENT(PythiaInterface)
 
 PythiaInterface::PythiaInterface(const std::string& type, const std::string& name, const IInterface* parent)
     : AlgTool(type, name, parent), m_pythiaSignal(nullptr), m_maxAborts(0), m_doMePsMatching(0), m_doMePsMerging(0),
-      m_matching(nullptr), m_setting(nullptr) {}
+      m_matching(nullptr) {}
 
 StatusCode PythiaInterface::initialize() {
   {
@@ -93,18 +96,18 @@ StatusCode PythiaInterface::initialize() {
       scheme = 0;
     }
 
-    m_setting = std::unique_ptr<Pythia8::amcnlo_unitarised_interface>(new Pythia8::amcnlo_unitarised_interface(scheme));
-    m_pythiaSignal->setUserHooksPtr((Pythia8::UserHooksPtr)m_setting.get());
+#if PYTHIA_VERSION_INTEGER >= 8318
+    using MergingHooks = Pythia8::aMCatNLOHooks;
+#else
+    using MergingHooks = Pythia8::amcnlo_unitarised_interface;
+#endif
+    m_pythiaSignal->setUserHooksPtr(std::make_shared<MergingHooks>(scheme));
   }
 
   // For jet matching, initialise the respective user hooks code.
   if (m_doMePsMatching) {
-    m_matching = std::unique_ptr<Pythia8::JetMatchingMadgraph>(new Pythia8::JetMatchingMadgraph());
-    if (!m_matching) {
-      error() << "Failed to initialise jet matching structures." << endmsg;
-      return StatusCode::FAILURE;
-    }
-    m_pythiaSignal->setUserHooksPtr((Pythia8::UserHooksPtr)m_matching.get());
+    m_matching = std::make_shared<Pythia8::JetMatchingMadgraph>();
+    m_pythiaSignal->setUserHooksPtr(m_matching);
   }
 
   // Jet clustering needed for matching
