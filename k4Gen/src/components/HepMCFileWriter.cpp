@@ -4,6 +4,8 @@
 #include "HepMC3/WriterGZ.h"
 #include "HepMC3/WriterRootTree.h"
 
+#include <exception>
+
 DECLARE_COMPONENT(HepMCFileWriter)
 
 namespace {
@@ -24,16 +26,21 @@ HepMCFileWriter::HepMCFileWriter(const std::string& name, ISvcLocator* svcLoc) :
 
 StatusCode HepMCFileWriter::initialize() {
   const std::string& format = m_format.value();
-  if (format == "Ascii") {
-    m_file = std::make_unique<HepMC3::WriterAscii>(m_filename.value());
-  } else if (format == "Compressed") {
-    m_filename = ensureSuffix(m_filename.value(), ".gz", msgStream());
-    m_file = std::make_unique<HepMC3::WriterGZ<HepMC3::WriterAscii>>(m_filename.value());
-  } else if (format == "RootTree") {
-    m_filename = ensureSuffix(m_filename.value(), ".root", msgStream());
-    m_file = std::make_unique<HepMC3::WriterRootTree>(m_filename.value());
-  } else {
-    error() << "Unknown Format '" << format << "', expected Ascii, Compressed, or RootTree" << endmsg;
+  try {
+    if (format == "Ascii") {
+      m_file = std::make_unique<HepMC3::WriterAscii>(m_filename.value());
+    } else if (format == "Compressed") {
+      m_filename = ensureSuffix(m_filename.value(), ".gz", msgStream());
+      m_file = std::make_unique<HepMC3::WriterGZ<HepMC3::WriterAscii>>(m_filename.value());
+    } else if (format == "RootTree") {
+      m_filename = ensureSuffix(m_filename.value(), ".root", msgStream());
+      m_file = std::make_unique<HepMC3::WriterRootTree>(m_filename.value());
+    } else {
+      error() << "Unknown Format '" << format << "', expected Ascii, Compressed, or RootTree" << endmsg;
+      return StatusCode::FAILURE;
+    }
+  } catch (const std::exception& e) {
+    error() << "Failed to create writer for Format '" << format << "': " << e.what() << endmsg;
     return StatusCode::FAILURE;
   }
   return Gaudi::Algorithm::initialize();
