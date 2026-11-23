@@ -7,6 +7,7 @@
 #include "Pythia8Plugins/HepMC3.h"
 #include "ResonanceDecayFilterHook.h"
 #include "k4FWCore/DataHandle.h"
+#include <atomic>
 #include <memory>
 
 // Forward HepMC
@@ -59,6 +60,9 @@ private:
   // Maximum number of aborts before giving up
   int m_maxAborts{0};
 
+  /// Number of events generated so far, used by printPythiaStatisticsEveryNEvents
+  std::atomic<unsigned int> m_nEventsGenerated{0};
+
   // -- aMCatNLO
   bool m_doMePsMatching{false};
   bool m_doMePsMerging{false};
@@ -74,8 +78,13 @@ private:
 
   ResonanceDecayFilterHook* m_resonanceDecayFilterHook{nullptr};
 
-  /// flag for additional printouts
-  Gaudi::Property<bool> m_printPythiaStatistics{this, "printPythiaStatistics", false, "Print Pythia Statistics"};
+  /// [[deprecated]] the Pythia statistics are always printed at finalize
+  Gaudi::Property<bool> m_printPythiaStatistics{this, "printPythiaStatistics", false,
+                                                "Deprecated, has no effect: the Pythia statistics are always printed "
+                                                "at finalize"};
+  /// print Pythia statistics every N events in addition to at finalize (0 = disabled)
+  Gaudi::Property<unsigned int> m_printPythiaStatisticsEveryNEvents{
+      this, "printPythiaStatisticsEveryNEvents", 0, "Print Pythia Statistics every N events (0 = disabled)"};
 
   Gaudi::Property<bool> m_doEvtGenDecays{this, "doEvtGenDecays", false, "Do decays with EvtGen"};
   Gaudi::Property<std::string> m_EvtGenDecayFile{this, "EvtGenDecayFile", "Generation/data/DECAY.DEC",
