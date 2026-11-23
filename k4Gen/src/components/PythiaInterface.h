@@ -78,7 +78,7 @@ private:
 
   ResonanceDecayFilterHook* m_resonanceDecayFilterHook{nullptr};
 
-  /// deprecated, the Pythia statistics are always printed at finalize
+  /// [[deprecated]] the Pythia statistics are always printed at finalize
   Gaudi::Property<bool> m_printPythiaStatistics{this, "printPythiaStatistics", false,
                                                 "Deprecated, has no effect: the Pythia statistics are always printed "
                                                 "at finalize"};
