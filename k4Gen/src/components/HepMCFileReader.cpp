@@ -23,12 +23,11 @@ StatusCode HepMCFileReader::initialize() {
     error() << "Input file name is not specified!" << endmsg;
     return StatusCode::FAILURE;
   }
-  // deduce_reader detects both format and compression from the file content,
-  // not the filename.
+  // deduce_reader detects the format (e.g. Ascii or RootTree) from the file
+  // content, not the filename.
   m_file = HepMC3::deduce_reader(m_filename.value());
   if (!m_file) {
-    error() << "Could not deduce a correct reader for " << m_filename.value()
-            << endmsg;
+    error() << "Could not deduce a correct reader for " << m_filename.value() << endmsg;
     return StatusCode::FAILURE;
   }
   StatusCode sc = AlgTool::initialize();
