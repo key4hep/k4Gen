@@ -61,7 +61,7 @@ private:
   int m_maxAborts{0};
 
   /// Number of events generated so far, used by printPythiaStatisticsEveryNEvents
-  std::atomic<unsigned long int> m_nEventsGenerated{0};
+  std::atomic<unsigned int> m_nEventsGenerated{0};
 
   // -- aMCatNLO
   bool m_doMePsMatching{false};
@@ -78,8 +78,10 @@ private:
 
   ResonanceDecayFilterHook* m_resonanceDecayFilterHook{nullptr};
 
-  /// flag for additional printouts
-  Gaudi::Property<bool> m_printPythiaStatistics{this, "printPythiaStatistics", false, "Print Pythia Statistics"};
+  /// deprecated, the Pythia statistics are always printed at finalize
+  Gaudi::Property<bool> m_printPythiaStatistics{this, "printPythiaStatistics", false,
+                                                "Deprecated, has no effect: the Pythia statistics are always printed "
+                                                "at finalize"};
   /// print Pythia statistics every N events in addition to at finalize (0 = disabled)
   Gaudi::Property<unsigned int> m_printPythiaStatisticsEveryNEvents{
       this, "printPythiaStatisticsEveryNEvents", 0, "Print Pythia Statistics every N events (0 = disabled)"};

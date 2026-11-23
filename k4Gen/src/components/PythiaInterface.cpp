@@ -32,6 +32,12 @@ StatusCode PythiaInterface::initialize() {
       return sc;
   }
 
+  if (m_printPythiaStatistics) {
+    warning() << ".printPythiaStatistics is deprecated and has no effect, the Pythia statistics are always printed "
+                 "at finalize"
+              << endmsg;
+  }
+
   if (m_pythiacard.empty() && m_pythia_extrasettings.size() < 2) {
     error() << "No Pythia8 configuration file (*.cmd) defined!" << endmsg;
     return StatusCode::FAILURE;
@@ -190,7 +196,7 @@ StatusCode PythiaInterface::getNextEvent(HepMC3::GenEvent& theEvent) {
     }
   }
 
-  const unsigned long int nEventsGenerated = ++m_nEventsGenerated;
+  const unsigned int nEventsGenerated = ++m_nEventsGenerated;
 
   if (m_printPythiaStatisticsEveryNEvents > 0 && nEventsGenerated % m_printPythiaStatisticsEveryNEvents == 0) {
     m_pythiaSignal->stat();
@@ -350,7 +356,7 @@ StatusCode PythiaInterface::finalize() {
     debug() << "POWHEG INFO: Number of FSR emissions vetoed: " << m_nFSRveto << endmsg;
   }
 
-  if (m_printPythiaStatistics && m_pythiaSignal) {
+  if (m_pythiaSignal) {
     m_pythiaSignal->stat();
   }
 

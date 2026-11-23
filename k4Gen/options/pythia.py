@@ -42,7 +42,6 @@ pythiafile = os.path.join(path_to_pythiafile, pythiafilename)
 #pythiafile="options/Pythia_LHEinput.cmd"
 pythia8gentool.pythiacard = pythiafile
 pythia8gentool.doEvtGenDecays = False
-pythia8gentool.printPythiaStatistics = True
 pythia8gentool.pythiaExtraSettings = [""]
 
 from Configurables import GenAlg
