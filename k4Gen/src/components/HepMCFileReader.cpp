@@ -7,6 +7,7 @@
 
 #include "HepMC3/GenParticle.h"
 #include "HepMC3/GenVertex.h"
+#include "HepMC3/ReaderFactory.h"
 
 DECLARE_COMPONENT(HepMCFileReader)
 
@@ -22,8 +23,13 @@ StatusCode HepMCFileReader::initialize() {
     error() << "Input file name is not specified!" << endmsg;
     return StatusCode::FAILURE;
   }
-  // open file using HepMC routines
-  m_file = std::make_unique<HepMC3::ReaderAscii>(m_filename.value());
+  // deduce_reader detects the format (e.g. Ascii or RootTree) from the file
+  // content, not the filename.
+  m_file = HepMC3::deduce_reader(m_filename.value());
+  if (!m_file) {
+    error() << "Could not deduce a correct reader for " << m_filename.value() << endmsg;
+    return StatusCode::FAILURE;
+  }
   StatusCode sc = AlgTool::initialize();
   return sc;
 }
