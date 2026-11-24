@@ -1,6 +1,5 @@
 #include "GaussSmearVertex.h"
 
-#include "GaudiKernel/IRndmGenSvc.h"
 #include "GaudiKernel/PhysicalConstants.h"
 #include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/Vector4DTypes.h"
@@ -8,6 +7,8 @@
 #include "HepMC3/GenEvent.h"
 #include "HepMC3/GenParticle.h"
 #include "HepMC3/GenVertex.h"
+
+#include <random>
 
 /// Declaration of the Tool Factory
 DECLARE_COMPONENT(GaussSmearVertex)
@@ -29,33 +30,32 @@ StatusCode GaussSmearVertex::initialize() {
   if (sc.isFailure())
     return sc;
 
-  auto randSvc = service<IRndmGenSvc>("RndmGenSvc", true);
-
-  sc = m_gaussDist.initialize(randSvc, Rndm::Gauss(0., 1));
-  if (sc.isFailure())
-    return sc;
+  m_uniqueIDSvc = service("UniqueIDGenSvc");
+  if (!m_uniqueIDSvc) {
+    error() << "Unable to locate the UniqueIDGenSvc" << endmsg;
+    return StatusCode::FAILURE;
+  }
 
   info() << "Smearing of interaction point with normal distribution "
          << " in x, y and z " << endmsg;
   info() << " with " << m_xsig / Gaudi::Units::mm << " mm  standard deviation in x " << m_ysig / Gaudi::Units::mm
          << " mm in y and " << m_zsig / Gaudi::Units::mm << " mm in z." << endmsg;
 
-  if (!sc.isSuccess()) {
-    error() << "Could not initialize normal random number generator";
-    return StatusCode::FAILURE;
-  }
-
   return sc;
 }
 
 /// Smearing function
-StatusCode GaussSmearVertex::smearVertex(HepMC3::GenEvent& theEvent) {
+StatusCode GaussSmearVertex::smearVertex(HepMC3::GenEvent& theEvent, const EventContext& ctx) {
 
-  double dx = m_gaussDist() * m_xsig + m_xmean;
-  double dy = m_gaussDist() * m_ysig + m_ymean;
-  double dz = m_gaussDist() * m_zsig + m_zmean;
+  const size_t uid = m_uniqueIDSvc->getUniqueID(ctx.evt(), 0, name());
+  std::mt19937_64 engine(uid);
+  std::normal_distribution<double> gaussDist(0., 1.);
+
+  double dx = gaussDist(engine) * m_xsig + m_xmean;
+  double dy = gaussDist(engine) * m_ysig + m_ymean;
+  double dz = gaussDist(engine) * m_zsig + m_zmean;
   // HepMC3 stores c*t as a length
-  double dt = (m_gaussDist() * m_tsig + m_tmean) * Gaudi::Units::c_light;
+  double dt = (gaussDist(engine) * m_tsig + m_tmean) * Gaudi::Units::c_light;
 
   Gaudi::LorentzVector dpos(dx, dy, dz, dt);
 
