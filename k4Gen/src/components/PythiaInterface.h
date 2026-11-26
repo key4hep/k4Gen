@@ -13,7 +13,8 @@
 // Forward HepMC
 namespace HepMC3 {
 class GenEvent;
-}
+class GenRunInfo;
+} // namespace HepMC3
 // Forward Pythia
 #if PYTHIA_VERSION_INTEGER < 8300
 class EvtGenDecays;
@@ -42,6 +43,8 @@ private:
   std::unique_ptr<Pythia8::Pythia> m_pythiaSignal;
   /// Interface for conversion from Pythia8::Event to HepMC event.
   HepMC3::Pythia8ToHepMC3 m_pythiaToHepMC;
+  /// Run information shared by all events: event weight names and generator version
+  std::shared_ptr<HepMC3::GenRunInfo> m_runInfo;
   /// Name of Pythia configuration file with Pythia simulation
   /// settings & input LHE file (if required)
   Gaudi::Property<std::string> m_pythiacard{this, "pythiacard", "Pythia_minbias_pp_100TeV.cmd",
