@@ -11,7 +11,12 @@
 // edm4hep
 #include "edm4hep/Constants.h"
 
+namespace HepMC3 {
+class GenRunInfo;
+} // namespace HepMC3
+
 namespace edm4hep {
+class EventHeaderCollection;
 class MCParticleCollection;
 class MutableMCParticle;
 } // namespace edm4hep
@@ -36,6 +41,11 @@ private:
   /// Handle for the genparticles to be written
   mutable k4FWCore::DataHandle<edm4hep::MCParticleCollection> m_genphandle{edm4hep::labels::MCParticles,
                                                                            Gaudi::DataHandle::Writer, this};
+  /// Handle for the event header to be written, only written if a path is set
+  mutable k4FWCore::DataHandle<edm4hep::EventHeaderCollection> m_eventHeaderHandle{"", Gaudi::DataHandle::Writer, this};
+  Gaudi::Property<uint32_t> m_runNumber{this, "runNumber", 0, "Run number written to the event header"};
+  /// Run information of the events (weight names, generator tools), put into the metadata at finalize
+  mutable std::shared_ptr<const HepMC3::GenRunInfo> m_runInfo;
 
   edm4hep::MutableMCParticle convert(std::shared_ptr<const HepMC3::GenParticle> hepmcParticle) const;
 };

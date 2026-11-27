@@ -2,13 +2,19 @@
 // Gaudi
 #include "GaudiKernel/PhysicalConstants.h"
 // HepMC
+#include "HepMC3/GenRunInfo.h"
 #include "HepMC3/GenVertex.h"
 // std
+#include <string>
 #include <unordered_map>
+#include <vector>
 // HepPDT
 #include "HepPDT/ParticleID.hh"
 // EDM4hep
+#include "edm4hep/EventHeaderCollection.h"
 #include "edm4hep/MCParticleCollection.h"
+// k4FWCore
+#include "k4FWCore/MetadataUtils.h"
 
 DECLARE_COMPONENT(HepMCToEDMConverter)
 
@@ -59,6 +65,8 @@ HepMCToEDMConverter::HepMCToEDMConverter(const std::string& name, ISvcLocator* s
     : Gaudi::Algorithm(name, svcLoc) {
   declareProperty("hepmc", m_hepmchandle, "HepMC event handle (input)");
   declareProperty("GenParticles", m_genphandle, "Generated particles collection (output)");
+  declareProperty("EventHeader", m_eventHeaderHandle,
+                  "Event header with the event weights (output), only written if a path is set");
 }
 
 StatusCode HepMCToEDMConverter::execute(const EventContext&) const {
@@ -103,7 +111,48 @@ StatusCode HepMCToEDMConverter::execute(const EventContext&) const {
     particles->push_back(_map[_p->id()]);
   }
   m_genphandle.put(particles);
+
+  if (!m_eventHeaderHandle.objKey().empty()) {
+    auto* headers = new edm4hep::EventHeaderCollection();
+    auto header = headers->create();
+    header.setEventNumber(evt->event_number());
+    header.setRunNumber(m_runNumber);
+    const auto& weights = evt->weights();
+    header.setWeight(weights.empty() ? 1.0 : weights[0]);
+    // Only nominal weight: no weights vector, as in k4SimDelphes
+    if (weights.size() > 1) {
+      for (const auto weight : weights) {
+        header.addToWeights(weight);
+      }
+    }
+    m_eventHeaderHandle.put(headers);
+  }
+
+  // Metadata cannot be put during the event loop, keep the run information for finalize
+  if (evt->run_info()) {
+    m_runInfo = evt->run_info();
+  }
+
   return StatusCode::SUCCESS;
 }
 
-StatusCode HepMCToEDMConverter::finalize() { return Gaudi::Algorithm::finalize(); }
+StatusCode HepMCToEDMConverter::finalize() {
+  if (m_runInfo) {
+    const auto& weightNames = m_runInfo->weight_names();
+    if (weightNames.size() > 1) {
+      k4FWCore::putParameter(edm4hep::labels::EventWeightsNames, weightNames, this);
+    }
+    if (!m_runInfo->tools().empty()) {
+      std::vector<std::string> names, versions, descriptions;
+      for (const auto& tool : m_runInfo->tools()) {
+        names.push_back(tool.name);
+        versions.push_back(tool.version);
+        descriptions.push_back(tool.description);
+      }
+      k4FWCore::putParameter(edm4hep::labels::GeneratorToolNames, names, this);
+      k4FWCore::putParameter(edm4hep::labels::GeneratorToolVersions, versions, this);
+      k4FWCore::putParameter(edm4hep::labels::GeneratorToolDescriptions, descriptions, this);
+    }
+  }
+  return Gaudi::Algorithm::finalize();
+}

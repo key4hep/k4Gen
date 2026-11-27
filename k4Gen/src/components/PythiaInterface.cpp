@@ -7,6 +7,7 @@
 #include "GaudiKernel/Incident.h"
 #include "GaudiKernel/System.h"
 #include "HepMC3/GenEvent.h"
+#include "HepMC3/GenRunInfo.h"
 #include "Pythia8/Pythia.h"
 #include "Pythia8Plugins/EvtGen.h"
 #include "Pythia8Plugins/PowhegHooks.h"
@@ -18,6 +19,9 @@
 #endif
 #include "edm4hep/Constants.h"
 #include "k4FWCore/MetadataUtils.h"
+
+#include <iomanip>
+#include <sstream>
 
 DECLARE_COMPONENT(PythiaInterface)
 
@@ -176,6 +180,12 @@ StatusCode PythiaInterface::initialize() {
 
   m_pythiaSignal->init();
 
+  // Run information shared by all events
+  m_runInfo = std::make_shared<HepMC3::GenRunInfo>();
+  std::ostringstream pythiaVersion;
+  pythiaVersion << std::fixed << std::setprecision(3) << m_pythiaSignal->settings.parm("Pythia:versionNumber");
+  m_runInfo->tools().push_back({"Pythia8", pythiaVersion.str(), ""});
+
   k4FWCore::putParameter(edm4hep::labels::GeneratorRandomSeed, m_pythiaSignal->settings.mode("Random:seed"), this);
 
   return StatusCode::SUCCESS;
@@ -296,6 +306,11 @@ StatusCode PythiaInterface::getNextEvent(HepMC3::GenEvent& theEvent) {
     }
   } // Debug
 
+  // Weight names, set with the first event as the LHE ones are only known then
+  if (m_runInfo->weight_names().empty()) {
+    m_runInfo->set_weight_names(m_pythiaSignal->info.weightNameVector());
+  }
+  theEvent.set_run_info(m_runInfo);
   m_pythiaToHepMC.fill_next_event(*m_pythiaSignal, theEvent);
 
   // Print debug: HepMC event info

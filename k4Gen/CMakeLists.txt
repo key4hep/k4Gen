@@ -74,6 +74,20 @@ add_test(NAME MDIreader
 	      )
 set_test_env(MDIreader)
 
+add_test(NAME Pythia8Weights
+               WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+               COMMAND k4run ${CMAKE_CURRENT_LIST_DIR}/options/pythiaWeights.py
+              )
+set_test_env(Pythia8Weights)
+set_tests_properties(Pythia8Weights PROPERTIES FIXTURES_SETUP pythia_weights_output)
+
+add_test(NAME Pythia8WeightsCheck
+               WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+               COMMAND python3 ${CMAKE_CURRENT_LIST_DIR}/tests/check_event_weights.py output_pythia_weights.root 42 Pythia8
+              )
+set_test_env(Pythia8WeightsCheck)
+set_tests_properties(Pythia8WeightsCheck PROPERTIES FIXTURES_REQUIRED pythia_weights_output)
+
 #--- Install the example options to the directory where the spack installation
 #--- points the $K4GEN environment variable
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/options
